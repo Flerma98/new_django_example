@@ -15,7 +15,7 @@ class User(AbstractBaseUser):
                                                            _('Username can only contain letters, numbers or an valid email'))])
     user_type = models.SmallIntegerField(choices=UserType.choices, default=UserType.CLIENT, null=False)
     profile = models.OneToOneField(UserProfile, null=True, blank=True, on_delete=models.CASCADE)
-    date_time_created = models.DateTimeField(auto_now_add=True, null=False)
+    date_time_created = models.DateTimeField(auto_now_add=True, null=False, )
 
     USERNAME_FIELD = 'username'
 
