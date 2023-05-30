@@ -1,4 +1,4 @@
-from curses.ascii import isalnum
+
 
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.validators import RegexValidator
