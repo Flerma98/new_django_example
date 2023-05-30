@@ -36,12 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'example.apps.ExampleConfig',
     'rest_framework',
     'apps.restaurants',
     'apps.foods',
     'apps.users',
-    'apps.users.user_profile'
+    'apps.users.user_profile',
+    'apps.auth'
 ]
 
 MIDDLEWARE = [
@@ -54,6 +54,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
 
 ROOT_URLCONF = 'django_example.urls'
 
