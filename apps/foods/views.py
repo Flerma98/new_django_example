@@ -1,11 +1,10 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from foods.models import Food
-from foods.serializers import FoodSerializer, FoodCreationSerializer
+from apps.foods.models import Food
+from apps.foods.serializers import FoodSerializer, FoodCreationSerializer
 from django.utils.translation import gettext as _
 
 

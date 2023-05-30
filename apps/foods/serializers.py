@@ -1,8 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from restaurants.models import Restaurant
-from restaurants.serializers import RestaurantSerializer
+from apps.restaurants.models import Restaurant
+from apps.restaurants.serializers import RestaurantSerializer
 from .models import Food
 from django.utils.translation import gettext_lazy as _
 

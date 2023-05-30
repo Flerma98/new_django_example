@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'example.apps.ExampleConfig',
     'rest_framework',
-    'restaurants',
-    'foods'
+    'apps.restaurants',
+    'apps.foods'
 ]
 
 MIDDLEWARE = [

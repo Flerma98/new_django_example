@@ -1,6 +1,6 @@
 from django.db import models
 
-from restaurants.models import Restaurant
+from apps.restaurants.models import Restaurant
 
 
 # Create your models here.
