@@ -27,3 +27,10 @@ class UserViewSet(viewsets.ModelViewSet):
         except:
             profile_saved.delete()
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        if instance.profile:
+            instance.profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
