@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+        instance: User = self.get_object()
         self.perform_destroy(instance)
         if instance.profile:
             instance.profile.delete()
