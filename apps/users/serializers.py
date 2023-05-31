@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
+from apps.users.validators import (
+    UniqueUsernameValidator, PasswordStrengthValidator,
+)
 from .models import User
 from .user_profile.serializers import UserProfileSerializer
 
@@ -11,8 +14,15 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
         extra_kwargs = {
+            'id': {'read_only': True},
+            'username': {
+                'required': True,
+                'validators': (UniqueUsernameValidator(User.objects.all()),)
+            },
             'password': {
-                'write_only': True
+                'required': True,
+                'write_only': True,
+                'validators': (PasswordStrengthValidator(),)
             },
             'user_type': {
                 'read_only': True
