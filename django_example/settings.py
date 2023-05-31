@@ -54,7 +54,8 @@ CORE_APPS = [
 
 LIBRARY_APPS = [
     'knox',
-    'drf_query_filter'
+    'drf_query_filter',
+    'django_cleanup'
 ]
 
 PROJECT_APPS = [
@@ -93,6 +94,8 @@ REST_KNOX = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CLEANUP_IGNORE_MEDIA_ROOT = True
 
 ROOT_URLCONF = 'django_example.urls'
 
