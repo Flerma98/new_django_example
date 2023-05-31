@@ -1,6 +1,7 @@
 from django.utils.translation import gettext
 from rest_framework.permissions import BasePermission
 
+from apps.users.models import User
 from apps.users.values.user_type import UserType
 
 
@@ -41,3 +42,15 @@ class BaseUserPermission(BasePermission):
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user.user_type == UserType.ADMIN
+
+
+class IsOwner(BasePermission):
+    def has_object_permission(self, request, view, obj: User):
+        return obj == request.user
+
+
+class IsAdminOrIsTheOwner(BasePermission):
+    def has_object_permission(self, request, view, obj: User):
+        if request.user.user_type == UserType.ADMIN:
+            return True
+        return obj == request.user

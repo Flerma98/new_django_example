@@ -4,11 +4,12 @@ from apps.users.validators import (
     UniqueUsernameValidator, PasswordStrengthValidator,
 )
 from .models import User
+from .user_profile.models import UserProfile
 from .user_profile.serializers import UserProfileSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer()
+    profile = UserProfileSerializer(required=False)
 
     class Meta:
         model = User
@@ -33,9 +34,21 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        model = self.Meta.model
+        profile_data = validated_data.pop('profile', None)
+
+        # create user
         normal_password = validated_data.pop('password')
-        user_created = model.objects.create(**validated_data)
+        user_created = User.objects.create(**validated_data)
         user_created.set_password(normal_password)
-        user_created.save()
+
+        # create profile if exist
+        if profile_data:
+            profile_saved = UserProfile.objects.create(**profile_data)
+            user_created.profile = profile_saved
+
+        user_created.save(update_fields=('password', 'profile'))
         return user_created
+
+    def update(self, instance, validated_data):
+        validated_data.pop('password', None)
+        return super().update(instance, validated_data)
