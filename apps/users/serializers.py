@@ -49,13 +49,14 @@ class UserSerializer(serializers.ModelSerializer):
         user_created.save(update_fields=('password', 'profile'))
         return user_created
 
-    def update(self, instance, validated_data):
+    def update(self, instance: User, validated_data):
         validated_data.pop('password', None)
 
         profile_data = validated_data.pop('profile', {})
         if profile_data:
             profile_serializer = self.fields['profile']
             profile_instance = instance.profile
-            profile_serializer.update(profile_instance, profile_data)
+            if profile_instance:
+                profile_serializer.update(profile_instance, profile_data)
 
         return super().update(instance, validated_data)
