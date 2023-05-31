@@ -10,8 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import json
 import os
 from pathlib import Path
+
+from django.template.context_processors import media
+
+
+def load_settings():
+    config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.json')
+    with open(config_file_path) as config_file:
+        return json.load(config_file)
+
+
+config = load_settings()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,23 +39,33 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-INSTALLED_APPS = [
+# Application definition
+CORE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    'rest_framework'
+]
+
+LIBRARY_APPS = [
+    'knox',
+    'drf_query_filter'
+]
+
+PROJECT_APPS = [
     'apps.restaurants',
     'apps.foods',
     'apps.users',
     'apps.users.user_profile',
-    'apps.auth_users',
-    'knox'
+    'apps.auth_users'
 ]
+
+INSTALLED_APPS = CORE_APPS + LIBRARY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +91,9 @@ REST_KNOX = {
     'USER_SERIALIZER': 'apps.users.serializers.UserSerializer'
 }
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 ROOT_URLCONF = 'django_example.urls'
 
 TEMPLATES = [
@@ -92,6 +117,25 @@ WSGI_APPLICATION = 'django_example.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+database_settings = config.get('DATABASE_SETTINGS', {})
+
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': database_settings.get('ENGINE', 'django.db.backends.postgresql'),
+        'NAME': database_settings.get('NAME'),
+        'USER': database_settings.get('USER', 'postgres'),
+        'PASSWORD': database_settings.get('PASSWORD', ''),
+        'HOST': database_settings.get('HOST', '127.0.0.1'),
+        'PORT': database_settings.get('PORT', '5432')
+    },
+    'test': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+'''
 
 DATABASES = {
     'default': {

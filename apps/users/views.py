@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from drf_query_filter import fields
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -8,6 +7,7 @@ from rest_framework.response import Response
 from apps.users.models import User
 from apps.users.permissions import IsAdmin, IsAdminOrIsTheOwner
 from apps.users.serializers import UserSerializer
+from apps.users.user_profile.forms import UserProfilePictureForm
 from apps.users.values.user_type import UserType
 
 
@@ -33,9 +33,9 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'list', 'retrieve', 'delete']:
             permission_classes = (IsAuthenticated, IsAdmin,)
-        elif self.action in ['update', 'partial_update']:
+        elif self.action in ['update', 'partial_update', 'upload_picture']:
             permission_classes = (IsAuthenticated, IsAdminOrIsTheOwner)
-        elif self.action in ['my_user']:
+        elif self.action in ['my_user', 'update_my_picture']:
             permission_classes = (IsAuthenticated,)
         elif self.action in ['create_client']:
             permission_classes = (AllowAny,)
@@ -61,15 +61,34 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path=r'my_user')
     def my_user(self, request, **kwargs):
-        try:
-            user_authenticated = request.user
-            instance = User.objects.get(pk=user_authenticated.id)
-            serializer = self.get_serializer(instance=instance)
-            return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response({
-                'error': _('User not found')
-            }, status=status.HTTP_404_NOT_FOUND)
+        instance = request.user
+        instance.refresh_from_db()
+        serializer = self.get_serializer(instance=instance)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['put'], url_path=r'upload_picture')
+    def upload_picture(self, request, *args, **kwargs):
+        user_instance: User = self.get_object()
+
+        form = UserProfilePictureForm(request.data, request.FILES)
+        if form.is_valid():
+            user_instance.profile.profile_image = form.cleaned_data['profile_image']
+            user_instance.profile.save()
+
+        return Response(self.get_serializer(instance=user_instance).data)
+
+    @action(detail=False, methods=['put'], url_path=r'update_my_picture')
+    def update_my_picture(self, request, *args, **kwargs):
+        user_authenticated: User = request.user
+
+        form = UserProfilePictureForm(request.data, request.FILES)
+        if form.is_valid():
+            user_authenticated.profile.profile_image = form.cleaned_data['profile_image']
+            user_authenticated.profile.save()
+
+        instance = request.user
+        instance.refresh_from_db()
+        return Response(self.get_serializer(instance=instance).data)
 
     def destroy(self, request, *args, **kwargs):
         instance: User = self.get_object()

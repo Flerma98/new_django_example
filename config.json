@@ -1,0 +1,10 @@
+{
+  "DATABASE_SETTINGS": {
+    "ENGINE": "django.db.backends.postgresql",
+    "NAME": "",
+    "USER": "",
+    "PASSWORD": "",
+    "HOST": "",
+    "PORT": ""
+  }
+}
