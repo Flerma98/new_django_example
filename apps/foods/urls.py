@@ -1,8 +1,7 @@
-from django.urls import path
+from rest_framework import routers
 
-from .views import FoodsFreeView, FoodsSpecificView
+from apps.foods.views import FoodViewSet
 
-urlpatterns = [
-    path('', FoodsFreeView.as_view(), name='food-free'),
-    path('<int:pk>/', FoodsSpecificView.as_view(), name='food-detail')
-]
+router = routers.SimpleRouter()
+router.register(r'', FoodViewSet, 'users')
+urlpatterns = router.urls
