@@ -1,6 +1,6 @@
 
 
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -18,6 +18,8 @@ class User(AbstractBaseUser):
     date_time_created = models.DateTimeField(auto_now_add=True, null=False, )
 
     USERNAME_FIELD = 'username'
+
+    objects = BaseUserManager()
 
     def __str__(self):
         return self.username

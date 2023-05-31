@@ -1,21 +1,23 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.utils.translation import gettext as _
 from rest_framework import status
+from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Restaurant
 from .serializers import RestaurantSerializer
-from rest_framework.exceptions import NotFound
-from django.utils.translation import gettext as _
 
 
 class RestaurantList(APIView):
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         restaurants = Restaurant.objects.all()
         serializer = RestaurantSerializer(restaurants, many=True)
         return Response(serializer.data)
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         serializer = RestaurantSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

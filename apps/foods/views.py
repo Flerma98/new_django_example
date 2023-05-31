@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -5,18 +6,19 @@ from rest_framework.views import APIView
 
 from apps.foods.models import Food
 from apps.foods.serializers import FoodSerializer, FoodCreationSerializer
-from django.utils.translation import gettext as _
 
 
 # Create your views here.
-class FoodList(APIView):
+class FoodsFreeView(APIView):
 
-    def get(self, request):
+    @staticmethod
+    def get(request):
         foods = Food.objects.all()
         serializer = FoodSerializer(foods, many=True)
         return Response(serializer.data)
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         serializer = FoodCreationSerializer(data=request.data)
         if serializer.is_valid():
             food = serializer.save()
@@ -25,7 +27,7 @@ class FoodList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class FoodDetail(APIView):
+class FoodsSpecificView(APIView):
 
     @staticmethod
     def get_food(pk):

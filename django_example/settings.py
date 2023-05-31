@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'apps.foods',
     'apps.users',
     'apps.users.user_profile',
-    'apps.auth'
+    'apps.auth_users',
+    'knox'
 ]
 
 MIDDLEWARE = [
@@ -57,8 +58,15 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
+        'knox.auth.TokenAuthentication',
     ],
+}
+
+REST_KNOX = {
+    'AUTH_HEADER_PREFIX': 'bearer',
+    'TOKEN_TTL': None,
+    'AUTO_REFRESH': False,
+    'USER_SERIALIZER': 'apps.users.serializers.UserSerializer'
 }
 
 ROOT_URLCONF = 'django_example.urls'
@@ -121,14 +129,11 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-# Definir los idiomas admitidos
 LANGUAGES = [
     ('en', 'English'),
-    ('es', 'Español'),
-    # Agrega otros idiomas según sea necesario
+    ('es', 'Español')
 ]
 
-# Definir la ruta a los archivos de traducción
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
