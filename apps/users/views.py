@@ -92,7 +92,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance: User = self.get_object()
+        profile = instance.profile
         self.perform_destroy(instance)
-        if instance.profile:
-            instance.profile.delete()
+        if profile:
+            profile.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

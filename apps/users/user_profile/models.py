@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.crypto import get_random_string
 
 from apps.users.user_profile.values.genre import Genre
+from django_example import settings
 
 
 def get_file_extension(filename):
@@ -27,3 +28,12 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def delete_picture(self):
+        if not self.profile_image:
+            return None
+
+        full_path = os.path.join(settings.MEDIA_ROOT, self.profile_image.path)
+
+        if os.path.exists(full_path):
+            os.remove(full_path)
