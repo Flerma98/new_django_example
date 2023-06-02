@@ -1,13 +1,14 @@
 from drf_query_filter import fields
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from apps.users.models import User
 from apps.users.permissions import IsAdmin, IsAdminOrIsTheOwner
 from apps.users.serializers import UserSerializer
-from apps.users.user_profile.forms import UserProfilePictureForm
+from apps.users.user_profile.serializers import UserProfilePictureSerializer
 from apps.users.values.user_type import UserType
 
 
@@ -66,29 +67,23 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance=instance)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['put'], url_path=r'upload_picture')
-    def upload_picture(self, request, *args, **kwargs):
-        user_instance: User = self.get_object()
-
-        form = UserProfilePictureForm(request.data, request.FILES)
-        if form.is_valid():
-            user_instance.profile.profile_image = form.cleaned_data['profile_image']
-            user_instance.profile.save()
-
+    def update_profile_picture(self, request, user_instance):
+        serializer = UserProfilePictureSerializer(data=request.data, instance=user_instance)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        user_instance.refresh_from_db()
         return Response(self.get_serializer(instance=user_instance).data)
 
-    @action(detail=False, methods=['put'], url_path=r'update_my_picture')
+    @action(detail=True, methods=['put'], parser_classes=[MultiPartParser, ])
+    def upload_picture(self, request, *args, **kwargs):
+        user_instance: User = self.get_object()
+        return self.update_profile_picture(request, user_instance)
+
+    @action(detail=False, methods=['put'], parser_classes=[MultiPartParser])
     def update_my_picture(self, request, *args, **kwargs):
-        user_authenticated: User = request.user
-
-        form = UserProfilePictureForm(request.data, request.FILES)
-        if form.is_valid():
-            user_authenticated.profile.profile_image = form.cleaned_data['profile_image']
-            user_authenticated.profile.save()
-
-        instance = request.user
-        instance.refresh_from_db()
-        return Response(self.get_serializer(instance=instance).data)
+        user_instance: User = request.user
+        return self.update_profile_picture(request, user_instance)
 
     def destroy(self, request, *args, **kwargs):
         instance: User = self.get_object()
