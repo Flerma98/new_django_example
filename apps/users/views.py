@@ -67,7 +67,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance=instance)
         return Response(serializer.data)
 
-    def update_profile_picture(self, request, user_instance):
+    def update_profile_picture(self, request, user_instance: User):
         serializer = UserProfilePictureSerializer(data=request.data, instance=user_instance)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
