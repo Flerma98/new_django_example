@@ -48,7 +48,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
@@ -56,7 +56,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def create_client(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
         serializer.save(user_type=UserType.CLIENT)
         return Response(serializer.data)
 
@@ -70,7 +70,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def update_profile_picture(self, request, user_instance: User):
         serializer = UserProfilePictureSerializer(data=request.data, instance=user_instance)
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer.is_valid(raise_exception=True)
         serializer.save()
         user_instance.refresh_from_db()
         return Response(self.get_serializer(instance=user_instance).data)
