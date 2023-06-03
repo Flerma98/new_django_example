@@ -14,6 +14,7 @@ import json
 import os
 from pathlib import Path
 
+from django.core.checks import templates
 from django.template.context_processors import media
 
 
@@ -49,7 +50,8 @@ CORE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'drf_spectacular'
 ]
 
 LIBRARY_APPS = [
@@ -83,6 +85,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',
     ],
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer', ],
+    'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser', ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 REST_KNOX = {
@@ -91,6 +96,28 @@ REST_KNOX = {
     'AUTO_REFRESH': False,
     'USER_SERIALIZER': 'apps.users.serializers.UserSerializer'
 }
+
+SPECTACULAR_SETTINGS = {
+    'SCHEMA_PATH_PREFIX': r'/v[0-9]',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CAMELIZE_NAMES': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+    },
+}
+
+'''
+if not config('DOC_ALLOW_ALL', default=False, cast=bool):
+    SPECTACULAR_SETTINGS['SERVE_PERMISSIONS'] = (
+        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAdminUser',
+    )
+    SPECTACULAR_SETTINGS['SERVE_AUTHENTICATION'] = (
+        'rest_framework.authentication.SessionAuthentication',
+    )
+'''
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
