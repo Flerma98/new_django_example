@@ -78,7 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -87,7 +87,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer', ],
     'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser', ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'lib.pagination.SearchPagination',
+    'DEFAULT_FILTER_BACKENDS': (
+        'drf_query_filter.filters.QueryParamFilter',
+    )
 }
 
 REST_KNOX = {
