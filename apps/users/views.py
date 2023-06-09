@@ -1,5 +1,6 @@
 from drf_query_filter import fields
 from rest_framework import status, viewsets
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -7,14 +8,26 @@ from rest_framework.response import Response
 
 from apps.users.models import User
 from apps.users.permissions import IsAdmin, IsAdminOrIsTheOwner
-from apps.users.serializers import UserSerializer, UserClientSerializer
+from apps.users.serializers import UserSerializer, UserEditionSerializer, \
+    UserClientCreationSerializer, UserCreationSerializer
 from apps.users.user_profile.serializers import UserProfilePictureSerializer
 from apps.users.values.user_type import UserType
 
 
 class UserViewSet(viewsets.ModelViewSet):
     model = User
-    serializer_class = UserSerializer
+    authentication_classes = [TokenAuthentication]
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserCreationSerializer
+        if self.action == 'create_client':
+            return UserClientCreationSerializer
+        if self.action in ['update', 'partial_update']:
+            return UserEditionSerializer
+        if self.action in ['upload_picture', 'update_my_picture']:
+            return UserProfilePictureSerializer
+        return UserSerializer
 
     ordering_fields = {
         'id': 'id',
@@ -46,7 +59,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def create(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserCreationSerializer(data=request.data)
         if not serializer.is_valid():
             serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -54,7 +67,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path=r'create_client')
     def create_client(self, request, *args, **kwargs):
-        serializer = UserClientSerializer(data=request.data)
+        serializer = UserClientCreationSerializer(data=request.data)
         if not serializer.is_valid():
             serializer.is_valid(raise_exception=True)
         serializer.save(user_type=UserType.CLIENT)

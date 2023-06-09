@@ -1,18 +1,20 @@
-from rest_framework import viewsets, status
 from drf_query_filter import fields
+from rest_framework import viewsets, status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from apps.foods.models import Food
 from apps.foods.serializers import FoodSerializer, FoodCreationSerializer, FoodEditionSerializer
-from apps.users.permissions import IsAdmin, IsAdminOrIsTheOwner
+from apps.users.permissions import IsAdminOrIsTheOwner
 
 
 # Create your views here.
 class FoodViewSet(viewsets.ModelViewSet):
     model = Food
     queryset = Food.objects.all()
+    authentication_classes = [TokenAuthentication]
 
     def get_serializer_class(self):
         if self.action == 'create':

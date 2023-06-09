@@ -1,9 +1,9 @@
+from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 from apps.restaurants.models import Restaurant
 from apps.restaurants.serializers import RestaurantSerializer
 from .models import Food
-from django.utils.translation import gettext_lazy as _
 
 
 class FoodSerializer(serializers.ModelSerializer):

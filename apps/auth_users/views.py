@@ -1,28 +1,34 @@
-from knox.models import AuthToken, AuthTokenManager
-from knox.views import LoginView
+from knox.models import AuthToken
+from knox.views import LoginView, LogoutView, LogoutAllView
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.response import Response
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.authentication import BasicAuthentication
 from rest_framework.views import APIView
 
 from apps.auth_users.serializers import LoginUserSerializerSchema
-from apps.users.serializers import UserClientSerializer
+from apps.users.serializers import UserClientCreationSerializer
 from apps.users.values.user_type import UserType
 
 
 # Create your views here.
 class LoginCustomView(LoginView):
-    serializer_class = LoginUserSerializerSchema
-    authentication_classes = (BasicAuthentication,)
+    authentication_classes = [BasicAuthentication]
+
+
+class LogoutCustomView(LogoutView):
+    authentication_classes = [TokenAuthentication]
+
+
+class LogoutAllCustomView(LogoutAllView):
+    authentication_classes = [TokenAuthentication]
 
 
 class AuthRegisterClientView(APIView):
-    serializer_class = UserClientSerializer
+    serializer_class = UserClientCreationSerializer
 
     @staticmethod
     def post(request):
-        user_serializer = UserClientSerializer(data=request.data)
+        user_serializer = UserClientCreationSerializer(data=request.data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save(user_type=UserType.CLIENT)
 

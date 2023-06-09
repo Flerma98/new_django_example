@@ -63,11 +63,28 @@ class UserSerializer(BaseUserSerializer):
     pass
 
 
-class UserClientSerializer(BaseUserSerializer):
+class UserClientCreationSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
+        fields = ['username', 'password', 'profile']
         extra_kwargs = {
             **BaseUserSerializer.Meta.extra_kwargs,
             'user_type': {
                 'read_only': True
             }
         }
+
+
+class UserCreationSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        fields = ['username', 'password', 'profile', 'user_type']
+        extra_kwargs = {
+            **BaseUserSerializer.Meta.extra_kwargs,
+            'user_type': {
+                'read_only': False
+            }
+        }
+
+
+class UserEditionSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        fields = ['username', 'profile']
