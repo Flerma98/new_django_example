@@ -1,7 +1,9 @@
+from knox.auth import TokenAuthentication as KnoxTokenAuth
 from knox.models import AuthToken
 from knox.views import LoginView, LogoutView, LogoutAllView
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import TokenAuthentication as RestFrameworkTokenAuth
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -16,11 +18,11 @@ class LoginCustomView(LoginView):
 
 
 class LogoutCustomView(LogoutView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [KnoxTokenAuth, RestFrameworkTokenAuth]
 
 
 class LogoutAllCustomView(LogoutAllView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [KnoxTokenAuth, RestFrameworkTokenAuth]
 
 
 class AuthRegisterClientView(APIView):

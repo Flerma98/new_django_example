@@ -1,6 +1,7 @@
 from drf_query_filter import fields
 from rest_framework import status, viewsets
-from rest_framework.authentication import TokenAuthentication
+from knox.auth import TokenAuthentication as KnoxTokenAuth
+from rest_framework.authentication import TokenAuthentication as RestFrameworkTokenAuth
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -16,7 +17,7 @@ from apps.users.values.user_type import UserType
 
 class UserViewSet(viewsets.ModelViewSet):
     model = User
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [KnoxTokenAuth, RestFrameworkTokenAuth]
 
     def get_serializer_class(self):
         if self.action == 'create':

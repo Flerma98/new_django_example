@@ -1,6 +1,7 @@
 from drf_query_filter import fields
 from rest_framework import viewsets, status
-from rest_framework.authentication import TokenAuthentication
+from knox.auth import TokenAuthentication as KnoxTokenAuth
+from rest_framework.authentication import TokenAuthentication as RestFrameworkTokenAuth
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -14,7 +15,7 @@ from apps.users.permissions import IsAdminOrIsTheOwner
 class FoodViewSet(viewsets.ModelViewSet):
     model = Food
     queryset = Food.objects.all()
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [KnoxTokenAuth, RestFrameworkTokenAuth]
 
     def get_serializer_class(self):
         if self.action == 'create':
