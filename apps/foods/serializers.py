@@ -30,3 +30,9 @@ class FoodCreationSerializer(serializers.ModelSerializer):
         restaurant = validated_data.pop('restaurant_id')
         food = Food.objects.create(**validated_data, restaurant_id=restaurant.id)
         return food
+
+
+class FoodEditionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Food
+        fields = ['name', 'calories']

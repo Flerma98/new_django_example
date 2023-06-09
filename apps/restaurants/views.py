@@ -3,13 +3,19 @@ from drf_query_filter import fields
 from rest_framework.filters import OrderingFilter
 
 from .models import Restaurant
-from .serializers import RestaurantSerializer
+from .serializers import RestaurantSerializer, RestaurantCreationSerializer, RestaurantEditionSerializer
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     model = Restaurant
-    serializer_class = RestaurantSerializer
     queryset = Restaurant.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return RestaurantCreationSerializer
+        if self.action in ['update', 'partial_update']:
+            return RestaurantEditionSerializer
+        return RestaurantSerializer
 
     filter_backends = [OrderingFilter]
     ordering_fields = {

@@ -1,6 +1,8 @@
 from django.utils.translation import gettext
 from rest_framework.permissions import BasePermission
 
+from apps.auth_users.serializers import LoginUserSerializerSchema
+from apps.foods.models import Food
 from apps.users.models import User
 from apps.users.values.user_type import UserType
 
@@ -50,7 +52,14 @@ class IsOwner(BasePermission):
 
 
 class IsAdminOrIsTheOwner(BasePermission):
-    def has_object_permission(self, request, view, obj: User):
+    def has_object_permission(self, request: LoginUserSerializerSchema, view, obj: User):
         if request.user.user_type == UserType.ADMIN:
             return True
         return obj == request.user
+
+
+class IsAdminOrIsTheRestaurant(BasePermission):
+    def has_object_permission(self, request: LoginUserSerializerSchema, view, obj: Food):
+        if request.user.user_type == UserType.ADMIN:
+            return True
+        return obj.restaurant.owner == request.user

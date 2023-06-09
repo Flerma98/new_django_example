@@ -8,6 +8,22 @@ from apps.users.user_profile.models import UserProfile
 from apps.users.values.user_type import UserType
 
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError(_('Username is required'))
+
+        username = self.model.normalize_username(username)
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('user_type', UserType.ADMIN)
+        return self.create_user(username, password, **extra_fields)
+
+
 class User(AbstractBaseUser):
     username_validator = UnicodeUsernameValidator()
 
@@ -22,7 +38,7 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'username'
 
-    objects = BaseUserManager()
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.username
