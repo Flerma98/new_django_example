@@ -17,6 +17,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.delete()
 
 
+class UserProfileEditableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['first_name', 'last_name', 'phone', 'birthday', 'genre']
+
+
 class UserProfilePictureSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile

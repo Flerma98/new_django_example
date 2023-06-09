@@ -5,7 +5,7 @@ from apps.users.validators import (
 )
 from .models import User
 from .user_profile.models import UserProfile
-from .user_profile.serializers import UserProfileSerializer
+from .user_profile.serializers import UserProfileSerializer, UserProfileEditableSerializer
 
 
 class BaseUserSerializer(serializers.ModelSerializer):
@@ -64,6 +64,8 @@ class UserSerializer(BaseUserSerializer):
 
 
 class UserClientCreationSerializer(BaseUserSerializer):
+    profile = UserProfileEditableSerializer(required=False)
+
     class Meta(BaseUserSerializer.Meta):
         fields = ['username', 'password', 'profile']
         extra_kwargs = {
@@ -75,6 +77,8 @@ class UserClientCreationSerializer(BaseUserSerializer):
 
 
 class UserCreationSerializer(BaseUserSerializer):
+    profile = UserProfileEditableSerializer(required=False)
+
     class Meta(BaseUserSerializer.Meta):
         fields = ['username', 'password', 'profile', 'user_type']
         extra_kwargs = {
@@ -86,5 +90,7 @@ class UserCreationSerializer(BaseUserSerializer):
 
 
 class UserEditionSerializer(BaseUserSerializer):
+    profile = UserProfileEditableSerializer(required=False)
+
     class Meta(BaseUserSerializer.Meta):
         fields = ['username', 'profile']
