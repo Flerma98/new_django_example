@@ -8,7 +8,7 @@ from .user_profile.models import UserProfile
 from .user_profile.serializers import UserProfileSerializer
 
 
-class UserSerializer(serializers.ModelSerializer):
+class BaseUserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(required=False)
 
     class Meta:
@@ -24,9 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
                 'required': True,
                 'write_only': True,
                 'validators': (PasswordStrengthValidator(),)
-            },
-            'user_type': {
-                'read_only': True
             },
             'date_time_created': {
                 'read_only': True
@@ -60,3 +57,17 @@ class UserSerializer(serializers.ModelSerializer):
                 profile_serializer.update(profile_instance, profile_data)
 
         return super().update(instance, validated_data)
+
+
+class UserSerializer(BaseUserSerializer):
+    pass
+
+
+class UserClientSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        extra_kwargs = {
+            **BaseUserSerializer.Meta.extra_kwargs,
+            'user_type': {
+                'read_only': True
+            }
+        }

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from apps.users.models import User
 from apps.users.permissions import IsAdmin, IsAdminOrIsTheOwner
-from apps.users.serializers import UserSerializer
+from apps.users.serializers import UserSerializer, UserClientSerializer
 from apps.users.user_profile.serializers import UserProfilePictureSerializer
 from apps.users.values.user_type import UserType
 
@@ -50,15 +50,15 @@ class UserViewSet(viewsets.ModelViewSet):
         if not serializer.is_valid():
             serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], url_path=r'create_client')
     def create_client(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserClientSerializer(data=request.data)
         if not serializer.is_valid():
             serializer.is_valid(raise_exception=True)
         serializer.save(user_type=UserType.CLIENT)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'], url_path=r'my_user')
     def my_user(self, request, **kwargs):
