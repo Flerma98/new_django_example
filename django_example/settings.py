@@ -39,7 +39,8 @@ CORE_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'drf_spectacular'
+    'drf_spectacular',
+    'corsheaders'
 ]
 
 LIBRARY_APPS = [
@@ -59,6 +60,7 @@ PROJECT_APPS = [
 INSTALLED_APPS = CORE_APPS + LIBRARY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -82,6 +84,8 @@ REST_FRAMEWORK = {
         'drf_query_filter.filters.QueryParamFilter',
     )
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 REST_KNOX = {
     'AUTH_HEADER_PREFIX': 'bearer',
